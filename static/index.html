@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Shadow of the Ronin — A side-scrolling turn-based Japanese samurai roguelike. Explore tatami castle rooms, battle fierce Oni and Yokai, and recover the Shogun's treasure.">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Shadow of the Ronin — Samurai Roguelike</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ============ TOP BAR ============ -->
+  <header id="top-bar">
+    <h1 id="game-title">SHADOW OF THE RONIN</h1>
+  </header>
+
+  <!-- ============ MAIN LAYOUT ============ -->
+  <main id="game-layout">
+    <!-- ---- GAME CANVAS AREA ---- -->
+    <section id="canvas-area">
+      <canvas id="game-canvas"></canvas>
+    </section>
+
+    <!-- ---- UI SIDEBAR ---- -->
+    <aside id="ui-panel">
+      <!-- Dungeon Level -->
+      <div class="panel-section" id="level-section">
+        <div class="panel-header">DUNGEON LEVEL</div>
+        <div id="level-indicator" class="level-number">1</div>
+      </div>
+
+      <!-- Player Stats -->
+      <div class="panel-section" id="stats-section">
+        <div class="panel-header">STATS</div>
+
+        <div class="stat-row">
+          <span class="stat-label">HP</span>
+          <div class="bar-container">
+            <div class="bar bar-hp" id="hp-bar">
+              <span class="bar-text" id="hp-text">30 / 30</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">XP</span>
+          <div class="bar-container">
+            <div class="bar bar-xp" id="xp-bar">
+              <span class="bar-text" id="xp-text">0 / 20</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-group">
+          <div class="stat-item">
+            <span class="stat-icon">⚔️</span>
+            <span class="stat-value" id="stat-attack">5</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">🛡️</span>
+            <span class="stat-value" id="stat-defense">2</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value" id="stat-level">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">💰</span>
+            <span class="stat-value" id="stat-gold">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory -->
+      <div class="panel-section" id="inventory-section">
+        <div class="panel-header">INVENTORY</div>
+        <div id="inventory-list" class="inventory-grid">
+          <!-- Populated by JS -->
+          <div class="inventory-empty">Empty</div>
+        </div>
+      </div>
+
+      <!-- Minimap -->
+      <div class="panel-section" id="minimap-section">
+        <div class="panel-header">MAP</div>
+        <div class="minimap-wrapper">
+          <canvas id="minimap-canvas" width="200" height="140"></canvas>
+        </div>
+      </div>
+
+      <!-- Message Log -->
+      <div class="panel-section" id="messages-section">
+        <div class="panel-header">LOG</div>
+        <div id="message-log">
+          <div class="message msg-system">Awaiting the brave adventurer...</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="panel-section" id="controls-section">
+        <div class="panel-header">CONTROLS</div>
+        <div class="controls-grid">
+          <span class="key">A / D</span><span class="ctrl-desc">Walk Left/Right</span>
+          <span class="key">W / S</span><span class="ctrl-desc">Climb Ladder</span>
+          <span class="key">Q / E</span><span class="ctrl-desc">Jump Left/Right</span>
+          <span class="key">SPACE</span><span class="ctrl-desc">Katana Strike</span>
+          <span class="key">Z / .</span><span class="ctrl-desc">Wait Turn</span>
+          <span class="key">G</span><span class="ctrl-desc">Pick Up</span>
+          <span class="key">ENTER</span><span class="ctrl-desc">Descend</span>
+          <span class="key">1-9</span><span class="ctrl-desc">Use Item</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ============ OVERLAY SCREENS ============ -->
+
+  <!-- Start Screen -->
+  <div id="start-screen" class="overlay-screen active">
+    <canvas id="particle-canvas"></canvas>
+    <div class="overlay-content">
+      <h1 class="overlay-title title-glow">SHADOW OF<br>THE RONIN</h1>
+      <p class="overlay-subtitle">A Turn-Based Samurai Platformer</p>
+      <div class="overlay-divider"></div>
+      <p class="overlay-prompt pulse-text">Press ENTER to begin</p>
+      <div class="start-tips">
+        <p>Traverse the shogun's ruins. Slay the corrupt Yokai and the Oni. Survive.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Death Screen -->
+  <div id="death-screen" class="overlay-screen">
+    <div class="overlay-content">
+      <h1 class="overlay-title death-title">YOU DIED</h1>
+      <div class="overlay-divider death-divider"></div>
+      <div class="death-stats" id="death-stats">
+        <!-- Populated by JS -->
+      </div>
+      <p class="overlay-prompt pulse-text">Press R to restart</p>
+    </div>
+  </div>
+
+  <!-- Victory Screen -->
+  <div id="victory-screen" class="overlay-screen">
+    <div class="overlay-content">
+      <h1 class="overlay-title victory-title">VICTORY</h1>
+      <p class="overlay-subtitle">The Crypts Have Been Conquered!</p>
+      <div class="overlay-divider victory-divider"></div>
+      <div class="victory-stats" id="victory-stats">
+        <!-- Populated by JS -->
+      </div>
+      <p class="overlay-prompt pulse-text">Press R to play again</p>
+    </div>
+  </div>
+
+  <!-- Screen Flash Overlay -->
+  <div id="screen-flash" class="screen-flash"></div>
+
+  <!-- Scripts (load in order) -->
+  <script src="js/sprites.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
